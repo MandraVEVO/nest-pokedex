@@ -6,6 +6,7 @@ import { Pokemon } from './entities/pokemon.entity';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { env } from 'process';
 
 @Injectable()
 export class PokemonService {
@@ -14,8 +15,10 @@ export class PokemonService {
     
     @InjectModel( Pokemon.name )
     private readonly pokemonModel: Model<Pokemon>,
-
-  ) {}
+    
+  ) {
+    // console.log(process.env.DEFAULT_LIMIT)
+  }
 
 
   async create(createPokemonDto: CreatePokemonDto) {
@@ -34,6 +37,7 @@ export class PokemonService {
 
 
   findAll(paginationDto: PaginationDto) {
+    console.log(process.env.DEFAULT_LIMIT);
     const { limit = 10, offset = 0} = paginationDto;
     return this.pokemonModel.find()
     .limit(limit) //solo trae 10 en 10
