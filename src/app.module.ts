@@ -8,18 +8,23 @@ import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { ConfigModule } from '@nestjs/config';
 import { env } from 'process';
+import { EnvConfiguration } from './config/app.config';
+import { JoiValidationSchema } from './config/joi.validation';
 
 @Module({
   imports: [
 
-    ConfigModule.forRoot(
+    ConfigModule.forRoot({
+      load:[EnvConfiguration],
+      validationSchema: JoiValidationSchema,
+    }
     ), //para que lea el archivo .env 
     
     ServeStaticModule.forRoot({
       rootPath: join(__dirname,'..','public'), 
     }),
 
-    MongooseModule.forRoot(process.env.MONGODB), //para conectar a la base de datos
+    MongooseModule.forRoot(process.env.MONGODB!), //para conectar a la base de datos
 
     PokemonModule,
 
@@ -32,7 +37,5 @@ import { env } from 'process';
   ],
 })
 export class AppModule {
-  constructor() {
-    console.log(process.env);
-  }
+  
 }

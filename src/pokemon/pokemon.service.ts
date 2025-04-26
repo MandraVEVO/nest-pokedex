@@ -7,17 +7,24 @@ import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { env } from 'process';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PokemonService {
+  
+  private defaultLimit: number;
 
   constructor(
     
     @InjectModel( Pokemon.name )
     private readonly pokemonModel: Model<Pokemon>,
+
+    private readonly configService: ConfigService,
+
     
   ) {
-    // console.log(process.env.DEFAULT_LIMIT)
+    this.defaultLimit = configService.get<number>('defaultLimit') ?? 10; // Provide a fallback value of 10
+    // console.log({defaultLimit: configService.get<number>('defaultLimit')});
   }
 
 
@@ -37,8 +44,8 @@ export class PokemonService {
 
 
   findAll(paginationDto: PaginationDto) {
-    console.log(process.env.DEFAULT_LIMIT);
-    const { limit = 10, offset = 0} = paginationDto;
+
+    const { limit = this.defaultLimit, offset = 0} = paginationDto;
     return this.pokemonModel.find()
     .limit(limit) //solo trae 10 en 10
     .skip(offset)//los siguientes 5
